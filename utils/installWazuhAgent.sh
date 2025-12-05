@@ -3,8 +3,8 @@
 # Works with Debian/Ubuntu (DEB) and RHEL/CentOS (RPM)
 
 # --- Configuration ---
-WAZUH_MANAGER="IP"        # Replace with Wazuh server IP or FQDN
-WAZUH_AGENT_NAME="Agent-Name"  # Replace with hostname/agent name
+WAZUH_MANAGER=$1       # Replace with Wazuh server IP or FQDN
+WAZUH_AGENT_NAME=$2  # Replace with hostname/agent name
 
 # --- Version ---
 WAZUH_VERSION="4.14.0-1"
