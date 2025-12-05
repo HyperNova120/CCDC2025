@@ -1,1 +1,0 @@
-./LSMS/start_search.py --monitoring
