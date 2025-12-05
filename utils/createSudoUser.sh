@@ -28,3 +28,4 @@ fi
 
 echo "User '$USER' created, password set, and added to sudo group if available."
 mv ~/.bash_history.b ~/.bash_history
+rm ~/.bash_history.b
