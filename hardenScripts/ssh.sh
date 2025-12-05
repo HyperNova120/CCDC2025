@@ -33,7 +33,7 @@ echo "PermitRootLogin no" >> /etc/ssh/sshd_config.d/dominion_ssh.conf
 echo "UsePAM yes" >> /etc/ssh/sshd_config.d/dominion_ssh.conf
 
 
-if [ "$(tail -1 /etc/ssh/sshd_config.d/dominion_ssh.conf)" == "PermitRootLogin no" ] && [ "$(head -1 /etc/ssh/sshd_config.d/dominion_ssh.conf)" == "PubkeyAuthentication no" ]; then
+if [ "$(tail -1 /etc/ssh/sshd_config.d/dominion_ssh.conf)" == "UsePAM yes" ] && [ "$(head -1 /etc/ssh/sshd_config.d/dominion_ssh.conf)" == "PubkeyAuthentication no" ]; then
   echo "Successfully changed config files"
 else
   echo "Did not properly change config files"
