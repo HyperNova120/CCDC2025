@@ -1,9 +1,7 @@
 #!/bin/sh
 
-# Usage: ./add-monitor.sh /path/to/file.log log
-# Arguments:
-#   $1 = file path to monitor
-#   $2 = log format (log, syslog, json, etc.)
+# Usage: ./addFileMonitoring.sh /path/to/file log_format
+# Example: ./addFileMonitoring.sh /root/testCheck log
 
 FILE_PATH=$1
 LOG_FORMAT=$2
@@ -13,12 +11,11 @@ LOCALFILE="<localfile>
   <location>${FILE_PATH}</location>
 </localfile>"
 
-# Insert before closing </ossec_config>
+# Check if file is already being monitored
 if ! grep -q "${FILE_PATH}" /var/ossec/etc/ossec.conf; then
-  sed -i "/<\/ossec_config>/i ${LOCALFILE}\n" /var/ossec/etc/ossec.conf
-  echo "Added monitoring for ${FILE_PATH}"
+  # Safely insert block before closing </ossec_config>
+  printf "%s\n" "$LOCALFILE" | sed -i "/<\/ossec_config>/r /dev/stdin" /var/ossec/etc/ossec.conf
+  echo "✅ Added monitoring for ${FILE_PATH}"
 else
-  echo "Monitoring for ${FILE_PATH} already exists"
+  echo "ℹ️ Monitoring for ${FILE_PATH} already exists"
 fi
-
-
