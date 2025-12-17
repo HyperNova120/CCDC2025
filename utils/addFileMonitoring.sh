@@ -1,29 +1,25 @@
-#!/bin/sh
-
-# Usage: ./setupFIM.sh /path/to/file_or_directory
-# Example: ./setupFIM.sh /etc/passwd
+#!/bin/bash
 
 TARGET_PATH=$1
 
 if [ -z "$TARGET_PATH" ]; then
-  echo "❌ Error: You must provide a file or directory path."
+  echo "Error: You must provide a file or directory path."
   echo "Usage: $0 /path/to/file_or_directory"
   exit 1
 fi
 
-SYSBLOCK="<syscheck>
-  <directories realtime=\"yes\">${TARGET_PATH}</directories>
-</syscheck>"
+CONFIG_FILE="/var/ossec/etc/ossec.conf"
 
-# Check if already monitored
-if grep -q "${TARGET_PATH}" /var/ossec/etc/ossec.conf; then
-  echo "ℹ️ ${TARGET_PATH} is already being monitored by Wazuh."
-else
-  # Insert before the FIRST closing </ossec_config>
-  printf "%s\n" "$SYSBLOCK" | sed -i "0,/<\/ossec_config>/r /dev/stdin" /var/ossec/etc/ossec.conf
-  echo "✅ Added FIM monitoring for ${TARGET_PATH}"
-fi
-
-# Restart agent to apply changes
-systemctl restart wazuh-agent
-echo "🔄 Wazuh agent restarted. Monitoring is now active."
+awk -v path="$TARGET_PATH" '
+  BEGIN {
+    block = "<syscheck>\n  <directories realtime=\"yes\">" path "</directories>\n</syscheck>"
+    done = 0
+  }
+  {
+    if (!done && /<\/ossec_config>/) {
+      print block
+      done = 1
+    }
+    print
+  }
+' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
